@@ -87,11 +87,19 @@ const History = () => {
                   </span>
 
                   <span>
-                    {item.date
-                      ? item.date
-                      : item.createdAt
-                        ? new Date(item.createdAt).toLocaleDateString()
-                        : ""}
+                     {item.date
+                       ? new Date(item.date).toLocaleDateString("en-GB", {
+                             day: "numeric",
+                             month: "long",
+                             year: "numeric",
+                         })
+                       : item.createdAt
+                         ? new Date(item.createdAt).toLocaleDateString("en-GB", {
+                             day: "numeric",
+                             month: "long",
+                             year: "numeric",
+                        })
+                    : ""}
                   </span>
 
                 </div>

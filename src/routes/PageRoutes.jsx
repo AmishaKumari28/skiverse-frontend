@@ -12,6 +12,7 @@ import History from "../pages/History";
 import Upload from "../pages/Upload";
 import Video from "../pages/Video";
 import Profile from "../pages/Profile";
+import FeedBack from "../pages/FeedBack";
 
 import AuthRoute from "./AuthRoute";
 import Login from "../pages/Login";
@@ -74,6 +75,11 @@ const PageRoutes = () => {
             },
 
             {
+              path: "feedback",
+              element: <FeedBack />,
+            },
+
+            {
               path: "video/:id",
               element: <Video />,
             },
@@ -87,3 +93,4 @@ const PageRoutes = () => {
 };
 
 export default PageRoutes;
+
