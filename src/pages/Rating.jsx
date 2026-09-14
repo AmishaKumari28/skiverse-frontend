@@ -51,8 +51,8 @@ const Rating = () => {
                   </span>
 
                   <span className="rounded-full bg-yellow-50 px-3 py-1 text-sm font-medium text-yellow-600">
-                    ⭐ {item.rating || 0} / 5
-                  </span>
+  ⭐ {item.rating || 0} / 5
+</span>
                 </div>
 
                 {/* Content */}

@@ -19,6 +19,7 @@ const Register = () => {
         name: data.name,
         email: data.email,
         password: data.password,
+        
       });
 
       alert(response.data.message);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import API from "../api/api";
 
@@ -19,6 +19,11 @@ const Video = () => {
   const [watchedPercent, setWatchedPercent] = useState(0);
   const [maxWatchedTime, setMaxWatchedTime] = useState(0);
   const [videoDuration, setVideoDuration] = useState(0);
+
+  // IMPORTANT:
+  // Ref keeps the actual maximum genuinely watched position
+  // immediately available, even before React re-renders.
+  const maxWatchedTimeRef = useRef(0);
 
   // --------------------------------
   // Fetch Course
@@ -69,7 +74,8 @@ const Video = () => {
 
         const alreadyRated = ratings.some(
           (item) =>
-            String(item.userId) === String(loggedUser._id)
+            String(item.userId?._id || item.userId) ===
+            String(loggedUser._id)
         );
 
         if (alreadyRated) {
@@ -95,6 +101,11 @@ const Video = () => {
 
     if (duration && Number.isFinite(duration)) {
       setVideoDuration(duration);
+
+      // Start from zero every time the video loads
+      maxWatchedTimeRef.current = 0;
+      setMaxWatchedTime(0);
+      setWatchedPercent(0);
     }
   };
 
@@ -103,16 +114,33 @@ const Video = () => {
   // --------------------------------
 
   const handleTimeUpdate = (e) => {
-    const currentTime = e.target.currentTime;
+    const video = e.target;
+    const currentTime = video.currentTime;
 
     if (!videoDuration) return;
 
-    const percent = (currentTime / videoDuration) * 100;
+    const maxWatched = maxWatchedTimeRef.current;
 
-    setWatchedPercent(Math.min(percent, 100));
+    /*
+      Only update genuine forward progress.
 
-    if (currentTime > maxWatchedTime) {
-      setMaxWatchedTime(currentTime);
+      If currentTime is close to the previously watched position,
+      it is normal playback, so we allow it to update.
+
+      If currentTime suddenly jumps far ahead, we DO NOT update
+      maxWatchedTimeRef.
+    */
+
+    if (currentTime <= maxWatched + 1.5) {
+      if (currentTime > maxWatched) {
+        maxWatchedTimeRef.current = currentTime;
+        setMaxWatchedTime(currentTime);
+      }
+
+      const percent =
+        (maxWatchedTimeRef.current / videoDuration) * 100;
+
+      setWatchedPercent(Math.min(percent, 100));
     }
   };
 
@@ -123,9 +151,25 @@ const Video = () => {
   const handleSeeking = (e) => {
     const video = e.target;
 
-    // Allow a small 2-second forward movement
-    if (video.currentTime > maxWatchedTime + 2) {
-      video.currentTime = maxWatchedTime;
+    const maxWatched = maxWatchedTimeRef.current;
+
+    /*
+      User is allowed to move backward.
+
+      User is NOT allowed to jump forward beyond the
+      genuinely watched position.
+    */
+
+    if (video.currentTime > maxWatched + 1) {
+      video.currentTime = maxWatched;
+
+      // Keep progress based on genuine watch time
+      if (videoDuration) {
+        const percent =
+          (maxWatched / videoDuration) * 100;
+
+        setWatchedPercent(Math.min(percent, 100));
+      }
     }
   };
 
@@ -161,6 +205,12 @@ const Video = () => {
 
       setSubmitted(true);
       setReview("");
+
+      // Immediately update displayed course rating
+      setCourse((prev) => ({
+        ...prev,
+        rating: response.data.courseRating,
+      }));
     } catch (error) {
       alert(
         error.response?.data?.message ||
