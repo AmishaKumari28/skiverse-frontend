@@ -24,12 +24,10 @@ const Profile = () => {
     return acc + (Number(course.rating) || 0);
   }, 0);
 
-  
-  
   const average =
     mySkills.length > 0
       ? (totalRating / mySkills.length).toFixed(1)
-      : "0.0";log
+      : "0.0";
 
   return (
     <div className="min-h-screen bg-[#F7F8FF] px-8 py-8">

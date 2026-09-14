@@ -19,7 +19,6 @@ const Register = () => {
         name: data.name,
         email: data.email,
         password: data.password,
-        
       });
 
       alert(response.data.message);
@@ -28,7 +27,6 @@ const Register = () => {
 
       // Go back to Login
       navigate("/");
-
     } catch (error) {
       console.log("Registration error:", error);
 
@@ -122,10 +120,16 @@ const Register = () => {
 
               <input
                 {...register("email", {
-                  required: "Enter an email",
+                  required: "Enter your college email",
+                  pattern: {
+                    value:
+                      /^(2508410(10|20|70)00(0[1-9]|[1-6][0-9]|7[0-8])|25084203000(0[1-9]|[1-6][0-9]|7[0-8]))@recsonbhadra\.ac\.in$/,
+                    message:
+                      "Please use your valid college email ID",
+                  },
                 })}
                 type="email"
-                placeholder="Enter your email"
+                placeholder="Enter your college email"
                 className="
                   w-full
                   h-12
@@ -212,6 +216,7 @@ const Register = () => {
 
           {/* LOGIN LINK */}
           <p className="text-center text-gray-500 mt-5">
+
             Already have an account?{" "}
 
             <NavLink

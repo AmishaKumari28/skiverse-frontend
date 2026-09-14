@@ -81,6 +81,14 @@ const SideBar = () => {
       {/* Bottom Section */}
       <div className="flex flex-col gap-4 w-full">
 
+        {/* Dashboard */}
+        <NavLink
+          to="/main/dashboard"
+          className="text-center bg-[#dde2fd] py-2 px-3 rounded-xl font-semibold font-mono text-[#354d71] hover:bg-[#d5d8eb]"
+        >
+          Dashboard
+        </NavLink>
+
         {/* Feedback Button */}
         <NavLink
           to={feedbackSubmitted ? "#" : "/main/feedback"}
@@ -129,4 +137,3 @@ const SideBar = () => {
 };
 
 export default SideBar;
-
